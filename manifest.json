@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "TwitterDownloadVideo",
+  "version": "1.0",
+  "description": "Extension that retrieve the direct url of the current video of a twitter page",
+  "permissions": [
+    "storage",
+    "declarativeNetRequest",
+    "webRequest",
+    "alarms",
+    "contextMenus",
+    "notifications"
+  ],
+  "host_permissions": [
+    "http://*/*",
+    "https://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "./popup.html"
+  }
+}
