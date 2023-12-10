@@ -30,30 +30,37 @@ async function getData(req) {
         dataData = await res.json();
         try {
             const entries = dataData.data.threaded_conversation_with_injections_v2.instructions[0]?.entries;
-            let savedEntry = null;
+            let savedEntrys = null;
             for (const entry of entries) {
                 let content = entry?.content?.itemContent?.tweet_results?.result?.legacy?.entities;
                 if(content === undefined)
                     content = entry?.content?.itemContent?.tweet_results?.result?.tweet.legacy.entities;
-                if (content?.media) {
-                    const med = content.media[0];
-                    if (med.type === 'video')
-                        savedEntry = med.video_info.variants;
-                }
+                if (content?.media)
+                    savedEntrys = content.media;
             }
-            if (savedEntry) {
-                let video = "";
-                let biggest = 0;
-                for(let i = 0; i < savedEntry.length; i++){
-                    if(savedEntry[i].bitrate)
-                        if(savedEntry[i].bitrate > biggest){
-                            biggest = savedEntry[i].bitrate;
-                            video = savedEntry[i].url;
+            if (savedEntrys) {
+                let str = "";
+                for(let i = 0; i < savedEntrys.length; i++){
+                    if(savedEntrys[i].type === "video"){
+                        let video = "";
+                        let biggest = 0;
+                        const vars = savedEntrys[i].video_info.variants;
+                        for(let j = 0; j < vars.length; j++) {
+                            if (vars[j].bitrate){
+                                if (vars[j].bitrate > biggest) {
+                                    biggest = vars[j].bitrate;
+                                    video = vars[j].url;
+                                }
+                            }
                         }
+                        str += video;
+                        if(i+1<savedEntrys.length)
+                            str += "<br/>"
+                    }
                 }
-                console.log(video);
-                if (video.trim().length > 1 && biggest > 0)
-                    chrome.storage.local.set({ 'twitter_url': video }, () => {});
+                console.log(str);
+                if (str.trim().length > 1)
+                    chrome.storage.local.set({ 'twitter_url': str }, () => {});
             }
         } catch (e) {
             console.error(e);
