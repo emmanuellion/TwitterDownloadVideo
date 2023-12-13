@@ -3,6 +3,9 @@
   "name": "TwitterDownloadVideo",
   "version": "1.0",
   "description": "Extension that retrieve the direct url of the current video of a twitter page",
+  "icons": {
+    "128": "logo.png"
+},
   "permissions": [
     "storage",
     "declarativeNetRequest",
